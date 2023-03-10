@@ -1,8 +1,9 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Order } from './entity/order.entity';
-import { CreateOrderRequest, CreateOrderResponse } from './proto/order.pb';
+import { Order, OrderStatus } from './entity/order.entity';
+import { CreateOrderRequest, CreateOrderResponse, UpdateOrderRequest, UpdateOrderResponse } from './proto/order.pb';
+
 
 @Injectable()
 export class OrderService implements OnModuleInit {
@@ -20,6 +21,66 @@ export class OrderService implements OnModuleInit {
 
 		order = await this.repository.save(order);
 
+
+		return {
+			id: order.id,
+			name: order.name,
+			address: order.address,
+			status: order.status,
+			dispatched: order.dispatched,
+			createdAt: String(order.createdAt),
+			updatedAt: String(order.updatedAt),
+		};
+	}
+
+	public async updateOrderAddress( data: UpdateOrderRequest ): Promise<UpdateOrderResponse> {
+		const { id, address } = data;
+
+		await this.repository.update(id, { address } );
+
+		const order = await this.repository.findOne({
+			where: { id },
+		});
+
+		return {
+			id: order.id,
+			name: order.name,
+			address: order.address,
+			status: order.status,
+			dispatched: order.dispatched,
+			createdAt: String(order.createdAt),
+			updatedAt: String(order.updatedAt),
+		};
+	}
+
+	public async updateOrdeStatusToProcessing( data: UpdateOrderRequest ): Promise<UpdateOrderResponse> {
+		const { id } = data;
+
+		await this.repository.update(id, { status: OrderStatus.PROCESSING } );
+
+		const order = await this.repository.findOne({
+			where: { id },
+		});
+
+		return {
+			id: order.id,
+			name: order.name,
+			address: order.address,
+			status: order.status,
+			dispatched: order.dispatched,
+			createdAt: String(order.createdAt),
+			updatedAt: String(order.updatedAt),
+		};
+	}
+
+	public async updateOrdeStatusToCompleted( data: UpdateOrderRequest ): Promise<UpdateOrderResponse> {
+		const { id } = data;
+
+		await this.repository.update(id, { status: OrderStatus.COMPLETED } );
+
+		const order = await this.repository.findOne({
+			where: { id },
+		});
 
 		return {
 			id: order.id,
