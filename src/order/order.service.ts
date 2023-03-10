@@ -2,7 +2,12 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order, OrderStatus } from './entity/order.entity';
-import { CreateOrderRequest, CreateOrderResponse, UpdateOrderRequest, UpdateOrderResponse } from './proto/order.pb';
+import {
+	CreateOrderRequest,
+	CreateOrderResponse,
+	UpdateOrderRequest,
+} from './proto/order.pb';
+import { FindOrderResponseDto } from './dto/order.dto';
 
 
 @Injectable()
@@ -33,7 +38,7 @@ export class OrderService implements OnModuleInit {
 		};
 	}
 
-	public async updateOrderAddress( data: UpdateOrderRequest ): Promise<UpdateOrderResponse> {
+	public async updateOrderAddress( data: UpdateOrderRequest ): Promise<CreateOrderResponse> {
 		const { id, address } = data;
 
 		await this.repository.update(id, { address } );
@@ -53,7 +58,7 @@ export class OrderService implements OnModuleInit {
 		};
 	}
 
-	public async updateOrdeStatusToProcessing( data: UpdateOrderRequest ): Promise<UpdateOrderResponse> {
+	public async updateOrdeStatusToProcessing( data: UpdateOrderRequest ): Promise<CreateOrderResponse> {
 		const { id } = data;
 
 		await this.repository.update(id, { status: OrderStatus.PROCESSING } );
@@ -73,7 +78,7 @@ export class OrderService implements OnModuleInit {
 		};
 	}
 
-	public async updateOrdeStatusToCompleted( data: UpdateOrderRequest ): Promise<UpdateOrderResponse> {
+	public async updateOrdeStatusToCompleted( data: UpdateOrderRequest ): Promise<CreateOrderResponse> {
 		const { id } = data;
 
 		await this.repository.update(id, { status: OrderStatus.COMPLETED } );
@@ -91,5 +96,13 @@ export class OrderService implements OnModuleInit {
 			createdAt: String(order.createdAt),
 			updatedAt: String(order.updatedAt),
 		};
+	}
+
+	public async findOrderById( id: string): Promise<FindOrderResponseDto> {
+
+		return await this.repository.findOne({
+			where: { id },
+		});
+
 	}
 }

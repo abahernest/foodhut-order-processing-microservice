@@ -1,5 +1,5 @@
 import { IsAlpha, IsBoolean, IsEnum, IsString, IsUUID } from 'class-validator';
-import { CreateOrderRequest, UpdateOrderRequest } from '../proto/order.pb';
+import { CreateOrderRequest, UpdateOrderRequest, UpdateOrderResponse } from '../proto/order.pb';
 import { OrderStatus } from '../entity/order.entity';
 
 export class CreateOrderRequestDto implements CreateOrderRequest {
@@ -24,18 +24,45 @@ export class UpdateOrderRequestDto implements UpdateOrderRequest {
 
 }
 
-export class UpdateOrderResponseDto {
+class UpdateOrderResponseDto_data {
   @IsString()
   @IsUUID()
-  id: string;
+  id?: string;
 
   @IsEnum(OrderStatus)
-  status: string;
+  status?: string;
 
   @IsString()
-  address: string;
+  address?: string;
 
   @IsBoolean()
-  dispatched: boolean
+  dispatched?: boolean
+}
+export class UpdateOrderResponseDto{
+
+  code: number;
+
+  message: string;
+
+  data?: UpdateOrderResponseDto_data;
+
+}
+
+
+
+export class FindOrderResponseDto {
+  id: string;
+
+  name: string
+
+  status: string;
+
+  address: string;
+
+  dispatched: boolean;
+
+  createdAt: Date;
+
+  updatedAt: Date;
 
 }

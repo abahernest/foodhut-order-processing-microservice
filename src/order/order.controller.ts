@@ -1,8 +1,8 @@
 import { Controller, Inject } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { OrderService } from './order.service';
-import { ORDER_SERVICE_NAME, CreateOrderResponse } from './proto/order.pb';
-import { CreateOrderRequestDto } from './dto/order.dto';
+import { ORDER_SERVICE_NAME, CreateOrderResponse, UpdateOrderResponse } from './proto/order.pb';
+import { CreateOrderRequestDto, UpdateOrderRequestDto, UpdateOrderResponseDto } from './dto/order.dto';
 import { CronService } from './clock';
 
 @Controller('order')
@@ -24,4 +24,24 @@ export class OrderController {
 
 		return order;
 	}
-}
+
+	@GrpcMethod(ORDER_SERVICE_NAME, 'UpdateOrder')
+	private async updateOrder( data: UpdateOrderRequestDto ): Promise<UpdateOrderResponse> {
+		const order = await this.service.findOrderById(data.id);
+
+		if (!order) {
+			const emptyOrder: UpdateOrderResponse = {
+				code: 400,
+				message: 'resource not found',
+			};
+			return emptyOrder;
+		}
+
+		return {
+			code: 200,
+			message: 'success',
+			data: await this.service.updateOrderAddress(data)
+		}
+		};
+	}
+

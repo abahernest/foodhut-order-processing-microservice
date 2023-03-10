@@ -26,13 +26,9 @@ export interface UpdateOrderRequest {
 }
 
 export interface UpdateOrderResponse {
-  id: string;
-  name: string;
-  address: string;
-  status: string;
-  dispatched: boolean;
-  createdAt: string;
-  updatedAt: string;
+  code: number;
+  message: string;
+  data?: CreateOrderResponse | undefined;
 }
 
 export const ORDER_PACKAGE_NAME = "order";
