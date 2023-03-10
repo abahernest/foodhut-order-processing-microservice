@@ -4,6 +4,7 @@ import { OrderService } from './order.service';
 import { ORDER_SERVICE_NAME, CreateOrderResponse, UpdateOrderResponse } from './proto/order.pb';
 import { CreateOrderRequestDto, UpdateOrderRequestDto, UpdateOrderResponseDto } from './dto/order.dto';
 import { CronService } from './clock';
+import { OrderStatus } from './entity/order.entity';
 
 @Controller('order')
 export class OrderController {
@@ -33,6 +34,14 @@ export class OrderController {
 			const emptyOrder: UpdateOrderResponse = {
 				code: 400,
 				message: 'resource not found',
+			};
+			return emptyOrder;
+		}
+
+		if (order.status == OrderStatus.COMPLETED || order.dispatched == true) {
+			const emptyOrder: UpdateOrderResponse = {
+				code: 400,
+				message: 'cannot change address at this time',
 			};
 			return emptyOrder;
 		}
